@@ -1,0 +1,2 @@
+sh spider crawl FoxNews
+
