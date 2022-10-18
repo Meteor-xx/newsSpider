@@ -37,20 +37,43 @@ class FoxnewsSpider(scrapy.Spider):
     def parse(self, response):
         article_body = response.xpath(".//div[@class='article-body']")
 
-        text_body = article_body.xpath("./p/text() | ./p/a/text()").extract()
-        text_body = check_list_end_correct(text_body)
-        img_body = article_body.xpath(".//div[@baseimage] | .//div[@imageorig]")
+        # text_body = article_body.xpath("./p/text() | ./p/a/text()").extract()
+        # text_body = check_list_end_correct(text_body)
+        # img_body = article_body.xpath(".//div[@baseimage] | .//div[@imageorig]")
+        # imgs = []
+        # for index, img in enumerate(img_body):
+        #     img_url = img.xpath("@imageorig | @baseimage").extract()
+        #     img_caption = img.xpath(".//div[@class='caption']/p/text()"
+        #                             " | .//div[@class='caption']/p/span/text()").extract()
+        #     img_caption = check_list_end_correct(img_caption[0])  # img_caption[0]表示不要摄影师描述
+        #     # imgs[x]: caption DocumentID src
+        #     imgs.append({"caption": img_caption, "id": response.meta['DocumentID'] + "_" + str(index),
+        #     "src": img_url[0]})
+        text_body = article_body.xpath("./p/text() | ./p/a/text() | .//div[@baseimage] | .//div[@imageorig]")
+        img_body = []
+        img_num = 0
+        text = []
+        for section in text_body:
+            if len(section.xpath("@baseimage | @imageorig")) > 0:  # 如果是图片
+                img_id = response.meta['DocumentID'] + "_" + str(img_num)
+                img_body.append([section, img_id])  # 加入img_body
+                img_num += 1
+                text.append("<IMG " + img_id + ">")
+                continue
+            text.append(section.extract())
+        text = check_list_end_correct(text)
         imgs = []
-        for index, img in enumerate(img_body):
-            img_url = img.xpath("@imageorig | @baseimage").extract()
-            img_caption = img.xpath(".//div[@class='caption']/p/text()"
-                                    " | .//div[@class='caption']/p/span/text()").extract()
+        for img in img_body:
+            img_url = img[0].xpath("@imageorig | @baseimage").extract()
+            img_caption = img[0].xpath(".//div[@class='caption']/p/text()"
+                                       " | .//div[@class='caption']/p/span/text()").extract()
             img_caption = check_list_end_correct(img_caption[0])  # img_caption[0]表示不要摄影师描述
             # imgs[x]: caption DocumentID src
-            imgs.append({"caption": img_caption, "id": response.meta['DocumentID'] + "_" + str(index), "src": img_url[0]})
+            imgs.append({"caption": img_caption, "id": img[1], "src": img_url[0]})
+
         item = FoxNewsItem()
         item['title'] = response.meta['Page'][0]
-        item['body'] = text_body
+        item['body'] = text
         item['page_url'] = self.start_urls[0] + response.meta['Page'][1]
         item['page_id'] = response.meta['DocumentID']
         item['imgs'] = imgs
