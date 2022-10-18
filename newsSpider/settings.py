@@ -17,7 +17,8 @@ NEWSPIDER_MODULE = 'newsSpider.spiders'
 #USER_AGENT = 'newsSpider (+http://www.yourdomain.com)'
 
 # Obey robots.txt rules
-ROBOTSTXT_OBEY = True
+ROBOTSTXT_OBEY = False
+
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
 #CONCURRENT_REQUESTS = 32
@@ -63,8 +64,9 @@ ROBOTSTXT_OBEY = True
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-   'newsSpider.pipelines.NewsspiderPipeline': 200,
-   'newsSpider.pipelines.NewsSeedsPipeline': 300,
+   'newsSpider.pipelines.FoxNewsPipeline': 200,
+   'newsSpider.pipelines.ImagePipeline': 300,
+   # 'newsSpider.pipelines.NewsSeedsPipeline': 300,
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)
@@ -103,5 +105,4 @@ custom_settings = {
             "middlewares.random_delay_middleware.RandomDelayMiddleware": 999,
         }
     }
-
 IMAGES_STORE = "./newsmedia/"

@@ -12,10 +12,12 @@ class NewsspiderItem(scrapy.Item):
     pass
 
 
-class NewsSeedItem(scrapy.Item):
+class FoxNewsItem(scrapy.Item):
     title = scrapy.Field()
-    href = scrapy.Field()
-    id = scrapy.Field()
+    body = scrapy.Field()
+    page_url = scrapy.Field()
+    page_id = scrapy.Field()
+    imgs = scrapy.Field()
 
 
 class NewsSeeds(scrapy.Item):
