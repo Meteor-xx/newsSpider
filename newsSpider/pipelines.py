@@ -52,9 +52,6 @@ class ImagePipeline(ImagesPipeline):
     def get_media_requests(self, item, info):
         # 下载图片，如果传过来的是集合需要循环下载
         # meta里面的数据是从spider获取，然后通过meta传递给下面方法：file_path
-        print("*"*100)
-        print("image pipeline started")
-        print("*"*100)
         if isinstance(item, FoxNewsItem):
             imgs = item["imgs"]
             for img in imgs:

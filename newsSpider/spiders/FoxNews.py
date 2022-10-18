@@ -28,11 +28,12 @@ class FoxnewsSpider(scrapy.Spider):
                 pages.append(page_item)
 
     def start_requests(self):
-        for id, page in enumerate(self.pages[0:1]):
+        for id, page in enumerate(self.pages):
             self.pages[id].append("Fox_" + str(id) + "_News")
             url = self.start_urls[0] + page[1]
             print("*****Start crawl: {}".format(url))
             yield Request(url=url, callback=self.parse, meta={"DocumentID": self.pages[id][4], "Page": page})
+
 
     def parse(self, response):
         article_body = response.xpath(".//div[@class='article-body']")
