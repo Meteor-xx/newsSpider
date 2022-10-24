@@ -40,7 +40,7 @@ class NewsSeedsPipeline(object):
 
     def process_item(self, item, spider):
         if isinstance(item, NewsSeeds):
-            file_url = "./news_seeds/FoxNewsSeeds_" + item["category"] + ".json"
+            file_url = "./newsSpider/news_seeds/FoxNewsSeeds_" + item["category"] + ".json"
             self.file = open(file_url, "a", encoding="utf-8")
             self.file.write(item['seeds'])
             self.file.flush()

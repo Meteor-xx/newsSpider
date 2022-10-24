@@ -66,7 +66,7 @@ ROBOTSTXT_OBEY = False
 ITEM_PIPELINES = {
    'newsSpider.pipelines.FoxNewsPipeline': 200,
    'newsSpider.pipelines.ImagePipeline': 300,
-   # 'newsSpider.pipelines.NewsSeedsPipeline': 300,
+   # 'newsSpider.pipelines.NewsSeedsPipeline': 200,
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)

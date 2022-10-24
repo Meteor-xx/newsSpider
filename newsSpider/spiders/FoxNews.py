@@ -18,21 +18,22 @@ class FoxnewsSpider(scrapy.Spider):
     allowed_domains = ['foxnews.com']
     start_urls = ['http://foxnews.com/']
     files = glob.glob("./newsSpider/news_seeds/Fox*")
-    pages = []  # page: 0:title 1:url 2:description 3:publicationDate 4: Fox_*_News
+    pages = []  # page: 0:title 1:url 2:description 3:publicationDate 4:page_category 5: Fox_*_News
     for file_name in files:
         lines = open(file_name, encoding="utf-8").readlines()
+        page_category = file_name[file_name.find("_", 20) + 1:file_name.find(".", 20)]
         datas = [json.loads(l) for l in lines]
         for cate in datas[:]:
             for page in cate:
-                page_item = [page['title'], page['url'], page['description'], page['publicationDate']]
+                page_item = [page['title'], page['url'], page['description'], page['publicationDate'], page_category]
                 pages.append(page_item)
 
     def start_requests(self):
         for id, page in enumerate(self.pages):
-            self.pages[id].append("Fox_" + str(id) + "_News")
+            self.pages[id].append("Fox_" + page[4] + "_" + str(id) + "_News")
             url = self.start_urls[0] + page[1]
             print("*****Start crawl: {}".format(url))
-            yield Request(url=url, callback=self.parse, meta={"DocumentID": self.pages[id][4], "Page": page})
+            yield Request(url=url, callback=self.parse, meta={"DocumentID": self.pages[id][5], "Page": page})
 
 
     def parse(self, response):
