@@ -24,7 +24,7 @@ def parse_res(response):
     return json_res
 
 
-class EconomictimeSpider(scrapy.Spider):
+class EconomictimeSeedsSpider(scrapy.Spider):
     name = 'EconomictimeSeeds'
     allowed_domains = ['economictimes.indiatimes.com']
     start_urls = ['https://economictimes.indiatimes.com/']

@@ -13,7 +13,7 @@ from itemadapter import ItemAdapter
 from scrapy import Request
 from scrapy.pipelines.images import ImagesPipeline
 
-from newsSpider.items import NewsSeeds, FoxNewsItem
+from newsSpider.items import NewsSeeds, FoxNewsItem, EconomictimeItem
 
 
 class NewsspiderPipeline:
@@ -28,6 +28,20 @@ class FoxNewsPipeline(object):
 
     def process_item(self, item, spider):
         if isinstance(item, FoxNewsItem):
+            line = json.dumps(dict(item), ensure_ascii=False) + "\n"
+            self.file.write(line)
+            self.file.flush()
+            return item  # 若pipeline较多，则需要return item，否则下一个pipeline接收到的为None
+
+
+class EconomictimePipeline(object):
+    def __init__(self):
+        file_url = "./news/Economictime.json"
+        self.file = open(file_url, "a", encoding="utf-8")
+
+    def process_item(self, item, spider):
+        if isinstance(item, EconomictimeItem):
+            print("*"*100)
             line = json.dumps(dict(item), ensure_ascii=False) + "\n"
             self.file.write(line)
             self.file.flush()
@@ -52,7 +66,7 @@ class ImagePipeline(ImagesPipeline):
     def get_media_requests(self, item, info):
         # 下载图片，如果传过来的是集合需要循环下载
         # meta里面的数据是从spider获取，然后通过meta传递给下面方法：file_path
-        if isinstance(item, FoxNewsItem):
+        if isinstance(item, EconomictimeItem):
             imgs = item["imgs"]
             for img in imgs:
                 yield Request(url=img['src'], meta={'name': img['id']})
@@ -77,7 +91,7 @@ class ImagePipeline(ImagesPipeline):
         elif ".jpg" in request.url:
             image_name = "jpg"
 
-        if image_name not in ["jpg","png","gif"]:
+        if image_name not in ["jpg", "png", "gif"]:
             image_name = "jpg"
         # 清洗Windows系统的文件夹非法字符，避免无法创建目录
         folder_strip = re.sub(r'[？\\*|“<>:/]', '', str(name))

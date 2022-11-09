@@ -64,9 +64,9 @@ ROBOTSTXT_OBEY = False
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-   # 'newsSpider.pipelines.FoxNewsPipeline': 200,
-   # 'newsSpider.pipelines.ImagePipeline': 300,
-   'newsSpider.pipelines.NewsSeedsPipeline': 200,
+   'newsSpider.pipelines.EconomictimePipeline': 200,
+   'newsSpider.pipelines.ImagePipeline': 300,
+   # 'newsSpider.pipelines.NewsSeedsPipeline': 200,
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)
@@ -89,7 +89,13 @@ ITEM_PIPELINES = {
 #HTTPCACHE_DIR = 'httpcache'
 #HTTPCACHE_IGNORE_HTTP_CODES = []
 #HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
-RANDOMIZE_DOWNLOAD_DELAY = True
+# RANDOMIZE_DOWNLOAD_DELAY = True
+CONCURRENT_REQUESTS = 8
+AUTOTHROTTLE_ENABLED = True
+AUTOTHROTTLE_START_DELAY = 1.0
+AUTOTHROTTLE_MAX_DELAY = 60.0
+AUTOTHROTTLE_TARGET_CONCURRENCY = 1.0
+AUTOTHROTTLE_DEBUG = True
 DEFAULT_REQUEST_HEADERS = {
   'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
   'Accept-Language': 'en',
@@ -105,4 +111,4 @@ custom_settings = {
             "middlewares.random_delay_middleware.RandomDelayMiddleware": 999,
         }
     }
-IMAGES_STORE = "./newsmedia/"
+IMAGES_STORE = "./EconomictimeMedia/"

@@ -23,3 +23,11 @@ class FoxNewsItem(scrapy.Item):
 class NewsSeeds(scrapy.Item):
     seeds = scrapy.Field()
     category = scrapy.Field()
+
+
+class EconomictimeItem(scrapy.Item):
+    title = scrapy.Field()
+    body = scrapy.Field()
+    page_url = scrapy.Field()
+    page_id = scrapy.Field()
+    imgs = scrapy.Field()
