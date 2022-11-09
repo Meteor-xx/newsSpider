@@ -4,7 +4,7 @@ import os.path
 import shutil
 import sys
 from typing import List
-
+import utils
 
 def page_collection(_filename: str) -> List:
     lines = open(_filename,
@@ -183,10 +183,33 @@ def clean(_file: str):
     print("Pages saved: ", des_json)
 
 
+def read_seed(_file: str):
+    file = open(_file, encoding="utf-8")
+    line = file.readline()
+    clean_seed(line)
+    # data = json.loads(line)
+    # print(len(data))
+
+
+def clean_seed(_data: str):
+    _data = json.loads(_data)
+    near_time = utils.time_format(_data[0]['time'][0])
+    far_time = utils.time_format(_data[0]['time'][0])
+    for page in _data:
+        page_time = page['time']
+        page_time = utils.time_format(page_time[0])
+        if page_time > near_time:
+            near_time = page_time
+        if page_time < far_time:
+            far_time = page_time
+    print(near_time, far_time)
+
+
 if __name__ == '__main__':
     # start_path = "../newsmedia/"
     # dst_path = "../FoxNews_4imgs_200words/"
-    page_json = "/media/meteor/MySSD/LEGION-GTX3080-Linux/workspace/newsSpider/news/FoxNews_4imgs_200words_cleaned.json"
+    page_json = "/media/meteor/MySSD/LEGION-GTX3080-Linux/workspace/newsSpider/newsSpider" \
+                "/news_seeds/EconomictimeSeeds_Product_launch_PL.json"
     # pages = page_collection(page_json)
     # mv_imgs(pages, start_path, dst_path)
-    read_cal_files(page_json)
+    read_seed(page_json)

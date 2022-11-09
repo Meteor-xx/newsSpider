@@ -64,9 +64,9 @@ ROBOTSTXT_OBEY = False
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-   'newsSpider.pipelines.FoxNewsPipeline': 200,
-   'newsSpider.pipelines.ImagePipeline': 300,
-   # 'newsSpider.pipelines.NewsSeedsPipeline': 200,
+   # 'newsSpider.pipelines.FoxNewsPipeline': 200,
+   # 'newsSpider.pipelines.ImagePipeline': 300,
+   'newsSpider.pipelines.NewsSeedsPipeline': 200,
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)
