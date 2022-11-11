@@ -64,7 +64,7 @@ ROBOTSTXT_OBEY = False
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-   'newsSpider.pipelines.EconomictimePipeline': 200,
+   'newsSpider.pipelines.NewsPipeline': 200,
    'newsSpider.pipelines.ImagePipeline': 300,
    # 'newsSpider.pipelines.NewsSeedsPipeline': 200,
 }
@@ -111,4 +111,4 @@ custom_settings = {
             "middlewares.random_delay_middleware.RandomDelayMiddleware": 999,
         }
     }
-IMAGES_STORE = "./EconomictimeMedia/"
+IMAGES_STORE = "./VOA_Meet_Media/"

@@ -5,7 +5,7 @@ import os
 import scrapy
 from scrapy import Request
 
-from newsSpider.items import EconomictimeItem
+from newsSpider.items import NewsItem
 
 
 def check_list_end_correct(strings):
@@ -31,15 +31,13 @@ class EconomictimeSpider(scrapy.Spider):
 
     def start_requests(self):
         for id, page in enumerate(self.pages):
-            if id <= 10:
-                self.pages[id].append("Economictime_" + page[4] + "_" + str(id) + "_News")
-                url = self.start_urls[0] + page[1]
-                print("*****Start crawl: {}".format(url))
-                yield Request(url=url, callback=self.parse, meta={"DocumentID": self.pages[id][5], "Page": page})
+            self.pages[id].append("Economictime_" + page[4] + "_" + str(id) + "_News")
+            url = self.start_urls[0] + page[1]
+            print("*****Start crawl: {}".format(url))
+            yield Request(url=url, callback=self.parse, meta={"DocumentID": self.pages[id][5], "Page": page})
 
     def parse(self, response):
         article = response.xpath(".//article")
-        article_body = response.xpath(".//div[@class='artText']")
         text_body = article.xpath(".//figure[@class='artImg'] |"
                                   ".//div[@class='artText']/text() |"
                                   ".//div[@class='artText']/a/text() |"
@@ -70,7 +68,8 @@ class EconomictimeSpider(scrapy.Spider):
             img_caption = check_list_end_correct(img_caption)  # img_caption[0]表示不要摄影师描述
             imgs.append({"caption": img_caption, "id": img[1], "src": img_url})
 
-        item = EconomictimeItem()
+        item = NewsItem()
+        item['source'] = "Economictime_" + response.meta['Page'][4] + "_News"
         item['title'] = response.meta['Page'][0]
         item['body'] = text
         item['page_url'] = self.start_urls[0] + response.meta['Page'][1]

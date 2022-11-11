@@ -5,7 +5,7 @@ import os
 import scrapy
 from scrapy import Request
 
-from newsSpider.items import FoxNewsItem
+from newsSpider.items import NewsItem
 
 
 def check_list_end_correct(strings):
@@ -38,19 +38,6 @@ class FoxnewsSpider(scrapy.Spider):
 
     def parse(self, response):
         article_body = response.xpath(".//div[@class='article-body']")
-
-        # text_body = article_body.xpath("./p/text() | ./p/a/text()").extract()
-        # text_body = check_list_end_correct(text_body)
-        # img_body = article_body.xpath(".//div[@baseimage] | .//div[@imageorig]")
-        # imgs = []
-        # for index, img in enumerate(img_body):
-        #     img_url = img.xpath("@imageorig | @baseimage").extract()
-        #     img_caption = img.xpath(".//div[@class='caption']/p/text()"
-        #                             " | .//div[@class='caption']/p/span/text()").extract()
-        #     img_caption = check_list_end_correct(img_caption[0])  # img_caption[0]表示不要摄影师描述
-        #     # imgs[x]: caption DocumentID src
-        #     imgs.append({"caption": img_caption, "id": response.meta['DocumentID'] + "_" + str(index),
-        #     "src": img_url[0]})
         text_body = article_body.xpath("./p/text() | ./p/a/text() | .//div[@baseimage] | .//div[@imageorig]")
         img_body = []
         img_num = 0
@@ -73,7 +60,8 @@ class FoxnewsSpider(scrapy.Spider):
             # imgs[x]: caption DocumentID src
             imgs.append({"caption": img_caption, "id": img[1], "src": img_url[0]})
 
-        item = FoxNewsItem()
+        item = NewsItem()
+        item['source'] = "FoxNews_" + response.meta['Page'][4] + "_News"
         item['title'] = response.meta['Page'][0]
         item['body'] = text
         item['page_url'] = self.start_urls[0] + response.meta['Page'][1]

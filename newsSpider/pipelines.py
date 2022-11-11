@@ -13,7 +13,7 @@ from itemadapter import ItemAdapter
 from scrapy import Request
 from scrapy.pipelines.images import ImagesPipeline
 
-from newsSpider.items import NewsSeeds, FoxNewsItem, EconomictimeItem
+from newsSpider.items import NewsSeeds, NewsItem
 
 
 class NewsspiderPipeline:
@@ -21,30 +21,18 @@ class NewsspiderPipeline:
         return item
 
 
-class FoxNewsPipeline(object):
+class NewsPipeline(object):
     def __init__(self):
-        file_url = "./news/FoxNews.json"
-        self.file = open(file_url, "a", encoding="utf-8")
+        self.file = ""
 
     def process_item(self, item, spider):
-        if isinstance(item, FoxNewsItem):
+        if isinstance(item, NewsItem):
             line = json.dumps(dict(item), ensure_ascii=False) + "\n"
+            file_url = "./news/" + item["source"] + ".json"
+            self.file = open(file_url, "a", encoding="utf-8")
             self.file.write(line)
             self.file.flush()
-            return item  # 若pipeline较多，则需要return item，否则下一个pipeline接收到的为None
-
-
-class EconomictimePipeline(object):
-    def __init__(self):
-        file_url = "./news/Economictime.json"
-        self.file = open(file_url, "a", encoding="utf-8")
-
-    def process_item(self, item, spider):
-        if isinstance(item, EconomictimeItem):
-            print("*"*100)
-            line = json.dumps(dict(item), ensure_ascii=False) + "\n"
-            self.file.write(line)
-            self.file.flush()
+            self.file.close()
             return item  # 若pipeline较多，则需要return item，否则下一个pipeline接收到的为None
 
 
@@ -54,7 +42,7 @@ class NewsSeedsPipeline(object):
 
     def process_item(self, item, spider):
         if isinstance(item, NewsSeeds):
-            file_url = "./newsSpider/news_seeds/EconomictimeSeeds_" + item["category"] + ".json"  # 更改时修改前缀
+            file_url = "./newsSpider/news_seeds/" + item["category"] + ".json"  # 更改时修改前缀
             self.file = open(file_url, "a", encoding="utf-8")
             self.file.write(item['seeds'])
             self.file.flush()
@@ -66,7 +54,7 @@ class ImagePipeline(ImagesPipeline):
     def get_media_requests(self, item, info):
         # 下载图片，如果传过来的是集合需要循环下载
         # meta里面的数据是从spider获取，然后通过meta传递给下面方法：file_path
-        if isinstance(item, EconomictimeItem):
+        if isinstance(item, NewsItem):
             imgs = item["imgs"]
             for img in imgs:
                 yield Request(url=img['src'], meta={'name': img['id']})

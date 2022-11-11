@@ -42,7 +42,7 @@ class FoxnewsSpider(scrapy.Spider):
     next_cate = False  # 切换类别
     next_api_index = False  # 切换api_url
     cate_num = 0  # 类别
-    cate_api_index = 1  # 类内index
+    cate_api_index = 0  # 类内index
     nums = 0  # 当前爬取数量
     Seeds = ""
 

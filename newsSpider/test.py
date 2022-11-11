@@ -12,6 +12,8 @@ def page_collection(_filename: str) -> List:
     datas = [json.loads(l) for l in lines]
     page_4img_200text = 0
     page_3img_200text = 0
+    page_2img_200text = 0
+    pages_2img_200text = []
     pages_4img_200text = []
     pages_3img_200text = []
     for page in datas:
@@ -23,6 +25,9 @@ def page_collection(_filename: str) -> List:
         if page_img_num >= 3 and page_text_num >= 200:
             page_3img_200text += 1
             pages_3img_200text.append(page)
+        if page_img_num >= 2 and page_text_num >= 200:
+            page_2img_200text += 1
+            pages_2img_200text.append(page)
     return pages_4img_200text
 
 
@@ -51,7 +56,7 @@ def mv_imgs(_pages: List, _start_path: str, _dst_path: str):  # 拿到需要转�
 
     for index, page in enumerate(_pages):
         print("\r", end="")
-        print("Moving imgs: {}%: ".format(index/len(_pages) * 100), end="")
+        print("Moving imgs: {}% ".format(index/len(_pages) * 100), end="")
         sys.stdout.flush()
         imgs = page['imgs']
         if len(imgs) != 0:
@@ -92,6 +97,7 @@ def read_cal_files(_file: str):
     max_text_num = len(datas[0]['body'].split())
     page_4img_200text = 0
     page_3img_200text = 0
+    page_2img_200text = 0
     for page in datas:
         page_img_num = len(page['imgs'])
         page_text_num = len(page['body'].split())
@@ -113,6 +119,8 @@ def read_cal_files(_file: str):
             page_4img_200text += 1
         if page_img_num >= 3 and page_text_num >=200:
             page_3img_200text += 1
+        if page_img_num >= 2 and page_text_num >=200:
+            page_2img_200text += 1
     avg_img_num = total_img_num / page_num
     avg_text_num = total_text_num / page_num
     print("*" * 100)
@@ -132,13 +140,14 @@ def read_cal_files(_file: str):
     print("Min Text num: ", min_text_num)
     print("Min Text page: ", min_text_page)
     print("*" * 10)
+    print("Page with over 2 imgs and 200 words: ", page_2img_200text)
     print("Page with over 3 imgs and 200 words: ", page_3img_200text)
     print("Page with over 4 imgs and 200 words: ", page_4img_200text)
     print("*" * 100)
 
 
 def confirm_img(_id: str) -> bool:
-    dir_path = "../newsmedia/"
+    dir_path = "../VOA_Meet_Media/"
     img_path = dir_path + _id + "*"
     img_exist = False
     img_file = glob.glob(img_path)
@@ -150,12 +159,14 @@ def confirm_img(_id: str) -> bool:
 def clean_pages(_pages: List) -> List:
     pages_cleaned = []
     pages_del = []
-    print("Start cleaning***")
+    print("***Start cleaning***")
     for index, page in enumerate(_pages):  # read in page and rectify page with image downloaded
         if index % 100 == 0:
             print(index / 10, end="")
         if index % 10 == 0:
             print("*", end="")
+        print("\r", end="")
+        print("Cleaning pages: {}% ".format(index / len(_pages) * 100), end="")
         imgs = page['imgs']
         page_del = False  # 是否删除page
         for img in imgs:
@@ -178,17 +189,19 @@ def clean(_file: str):
     print("Get ", len(pages), " pages")
     cleaned_pages = clean_pages(pages)
     print("Cleaned ", len(cleaned_pages), " pages")
-    des_json = "../news/FoxNews_4imgs_200words_cleaned.json"
+    des_json = "../news/VOA_Meet_4imgs_200words_cleaned.json"
     mv_pages(cleaned_pages, des_json)
-    print("Pages saved: ", des_json)
+    mv_imgs(cleaned_pages, "/media/meteor/MySSD/LEGION-GTX3080-Linux/workspace/newsSpider/VOA_Meet_Media/",
+            "/media/meteor/MySSD/LEGION-GTX3080-Linux/workspace/newsSpider/VOA_Meet_4imgs_200words/")
+    print("\nPages saved: ", des_json)
 
 
 def read_seed(_file: str):
     file = open(_file, encoding="utf-8")
-    line = file.readline()
-    clean_seed(line)
-    # data = json.loads(line)
-    # print(len(data))
+    line = file.readlines()
+    # clean_seed(line)
+    data = json.loads(line[8])
+    print(data['body'])
 
 
 def clean_seed(_data: str):
@@ -208,8 +221,7 @@ def clean_seed(_data: str):
 if __name__ == '__main__':
     # start_path = "../newsmedia/"
     # dst_path = "../FoxNews_4imgs_200words/"
-    page_json = "/media/meteor/MySSD/LEGION-GTX3080-Linux/workspace/newsSpider/newsSpider" \
-                "/news_seeds/EconomictimeSeeds_Product_launch_PL.json"
+    page_json = "/media/meteor/MySSD/LEGION-GTX3080-Linux/workspace/newsSpider/news/VOA_Meet_News.json"
     # pages = page_collection(page_json)
     # mv_imgs(pages, start_path, dst_path)
-    read_seed(page_json)
+    clean(page_json)
