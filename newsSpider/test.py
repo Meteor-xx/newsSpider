@@ -198,10 +198,27 @@ def clean(_file: str):
 
 def read_seed(_file: str):
     file = open(_file, encoding="utf-8")
-    line = file.readlines()
+    lines = file.readlines()
     # clean_seed(line)
-    data = json.loads(line[8])
-    print(data['body'])
+    Conflict_num = 0
+    Disaster_num = 0
+    Sports_num = 0
+    for l in lines:
+        data = json.loads(l)
+        id = data['imgs'][0]['id']
+        if id.find("Fox_Sports") >= 0:
+            Sports_num += 1
+            continue
+        if id.find("Fox_Disasters") >= 0:
+            Disaster_num += 1
+            continue
+        if id.find("Fox_Conflicts") >= 0:
+            Conflict_num += 1
+            continue
+
+    print("Conflict num:", Conflict_num)
+    print("Disasters num:", Disaster_num)
+    print("Sports num:", Sports_num)
 
 
 def clean_seed(_data: str):
@@ -221,7 +238,7 @@ def clean_seed(_data: str):
 if __name__ == '__main__':
     # start_path = "../newsmedia/"
     # dst_path = "../FoxNews_4imgs_200words/"
-    page_json = "/media/meteor/MySSD/LEGION-GTX3080-Linux/workspace/newsSpider/news/VOA_Meet_News.json"
+    page_json = "/media/meteor/MySSD/LEGION-GTX3080-Linux/workspace/newsSpider/news/FoxNews_4imgs_200words_cleaned.json"
     # pages = page_collection(page_json)
     # mv_imgs(pages, start_path, dst_path)
-    clean(page_json)
+    read_seed(page_json)
